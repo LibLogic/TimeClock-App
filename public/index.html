@@ -6,20 +6,21 @@
 	<body>
 		<h1>Company Name</h1>
 		<h2>Time Clock</h2>
-		<form>
+		<form id="clock-form">
 			<label>Employee Id: </label>
 			<input type="text"/>
-		</form>
+
 			<p>
 				<span><button>Time In</button></span>
 				<span><button>Time Out</button></span>
 			</p>
+		</form>
 			<br>
-			<p>
-				<span><button>Add Employee</button></span>
+			<p id="add-emp">
+				<span><button id="add-emp-btn">Add Employee</button></span>
 			</p>
 			
-			<form class="hidden">
+			<form id="emp-form" class="hidden">
 				<label>First Name: </label>
 				<input type="text" name="first"/>
 				<label>Last Name: </label>
@@ -29,9 +30,28 @@
 					<input type="text" name="emp-id"/></p>
 				<p>
 					<label>Department Name: </label>
-					<input type="text" name="dept-name"/>
+					<input type="text" name="dept-name"/><p></p>
+					<button id="save-btn" type="submit">Save</button>
 				</p>
 			</form>
+<script>
+const addEmpBtn = document.getElementById("add-emp-btn");
+const addEmp = document.getElementById("add-emp");
+const empForm =	document.getElementById("emp-form");
+const clockForm = document.getElementById("clock-form");
+const saveBtn = document.getElementById("save-btn");
 
+addEmpBtn.addEventListener('click', function(){
+	addEmpBtn.classList.add('hidden');
+	addEmp.classList.add('hidden');	
+	empForm.classList.remove('hidden');
+	clockForm.classList.add('hidden');
+});
+
+saveBtn.addEventListener('click', function(){
+	empForm.classList.add('hidden');
+	clockForm.classList.remove('hidden');	
+});
+</script>
 	</body>
 </html>
