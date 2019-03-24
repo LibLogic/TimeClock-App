@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 
 const url = "mongodb://" + IP + "/timeclock";
-mongoose.connect(url, { useCreateIndex: true, useNewUrlParser: true });
+mongoose.connect(url, { useFindAndModify: false, useCreateIndex: true, useNewUrlParser: true });
 
 mongoose.Promise = global.Promise;
 

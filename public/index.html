@@ -4,18 +4,19 @@
 		<link rel="stylesheet" href="./styles/style.css">
 	</head>
 	<body>
-		<h1>Company Name</h1>
+		<h1 class="title">Starbucks Inc.</h1><button id="change-btn">Change Company Name</button>
+		<span id="input-span" class="hidden"><label>Change Company Name: </label><input id="emp-id" type="text" /><button id="save-btn1">Save</button></span>
 
-		<form id="clock-form">
+		<form method="post" id="clock-form">
 			<h2>Time Clock</h2>
 			<label>Employee Id: </label>
-			<select id="selectEmp">
+			<select id="select-emp">
 				<option>Please select your employee ID</option>
 				<option>101</option>
-				<option>102</option>
+				<option ref="empId">5c94e0c2bc501137ba809c8e</option>
 			</select>
-			<span><button id="in-btn" disabled="disabled">Time In</button></span>
-			<span><button id="out-btn" disabled="disabled">Time Out</button></span>
+			</a><span><button id="in-btn" disabled="disabled">Time In</button></span>
+			</a><span><button id="out-btn" disabled="disabled">Time Out</button></span>
 		</form>
 		
 			<p id="add-emp">
@@ -23,19 +24,19 @@
 				<span><button id="add-emp-btn">Add New Employee</button></span>
 			</p>
 			
-			<form id="emp-form" class="hidden">
+			<form method="post" id="emp-form" class="hidden">
 				<h2>Add New Employee</h2>				
-				<label>First Name: </label>
+				<label>First Name:&nbsp;</label>
 				<input type="text" name="first"/>
-				<label>Last Name: </label>
+								<label>&nbsp;&nbsp;&nbsp;&nbsp;Last Name:&nbsp;</label>
 				<input type="text" name="last"/>
 				<p>
 					<label>Employee Id: </label>
-					<input type="text" name="emp-id"/></p>
+					<input type="text" name="emp-id" placeholder="Could be auto generated"/></p>
 				<p>
 					<label>Department Name: </label>
-					<input type="text" name="dept-name"/><p></p>
-					<button id="save-btn" type="submit">Save</button>
+					<input type="text" name="dept-name" placeholder="Could be a dropdown"/><p></p>
+					<button id="save-btn2" type="submit">Save</button>
 				</p>
 			</form>
 	<script src="./scripts/script1.js" type="text/javascript"></script>
