@@ -29,6 +29,10 @@ router.delete('/:id', function(req, res, next){
   }).catch(next);
 });
 
+
+
+
+
 router.put('/in/:id', function(req, res, next){
   Employee.findOne({_id: req.params.id})
   .then(function(employee){
@@ -50,14 +54,19 @@ router.put('/out/:id', function(req, res, next){
   .then(function(employee){
   if( employee.isClockedIn == true ){
     var timeOut = new Date().getTime();
-    Employee.findOneAndUpdate({_id: req.params.id}, {$set: { "timeOut": timeOut, "isClockedIn": false }})
+    Employee.findOneAndUpdate({_id: req.params.id}, { $set: { "timeOut": timeOut, "isClockedIn": false } } )
     .then(function(employee){
       Employee.findOne({_id: req.params.id})
       .then(function(employee){
         var session = calculateMinutes(employee.timeIn[employee.timeIn.length-1], employee.timeOut[employee.timeOut.length-1]);
         var dateString = new Date().toLocaleString("en-US", {timeZone: "America/New_York"}).slice(0, 9);
-        Employee.findOneAndUpdate({_id: req.params.id}, {"sessions": {"session": [dateString, session]}})
-        //Employee.findOneAndUpdate({_id: req.params.id}, {$push: {"sessions": {"session": [dateString, session]}}})
+       Employee.findOneAndUpdate({_id: req.params.id}, {"sessions": { "date": dateString, "minutes": session }})
+       
+//       Employee.findOneAndUpdate({_id: req.params.id},  {"sessions": { "date": dateString }, $inc: { "sessions.minutes": session } })
+       
+
+       //Employee.findOneAndUpdate({_id: req.params.id}, {"sessions": {"date": dateString, "minutes": session }})
+        //Employee.findOneAndUpdate({_id: req.params.id}, {$push: {"sessions": {"date": dateString, "minutes": session }}})
         .then(function(employee){
           Employee.findOne({_id: req.params.id})
           .then(function(employee){
@@ -70,6 +79,20 @@ router.put('/out/:id', function(req, res, next){
     res.end();
   }}).catch(next);
 });
+
+
+
+// if todays date == date from sessions field then accumulate our session value
+// using the $inc: function from mongoose
+// otherwise it's a new day, so push the sessions date (which will now be yesterdays date)
+// date & total into a dailyHours field, reinitialize the sessions field with 
+// todays new date and a value of 0
+
+function archiveByDay (){
+  
+}
+
+
 
 function calculateMinutes(timeIn = 0, timeOut = 0){
 		// if(isUserLoggedIn()){

@@ -43,7 +43,7 @@ inBtn.addEventListener('click', function(){
 	outBtn.removeAttribute('disabled');
 	var emp = selEmp.options[selEmp.selectedIndex].text;
 	var url = "https://cohort-6d-hdgknsn.c9users.io/api/in/" + emp;
-	clockIn(url);
+	logTime(url);
 });
 
 outBtn.addEventListener('click', function(){
@@ -51,7 +51,7 @@ outBtn.addEventListener('click', function(){
 	inBtn.removeAttribute('disabled');
 	var emp = selEmp.options[selEmp.selectedIndex].text;
 	var url = "https://cohort-6d-hdgknsn.c9users.io/api/out/" + emp;
-	clockOut(url);
+	logTime(url);
 });
 
 selEmp.addEventListener('change', function(e){
@@ -60,14 +60,9 @@ selEmp.addEventListener('change', function(e){
 });
 
 
-function clockIn(emp){
-	console.log(emp);
+function logTime(url){
+	var xhr = new XMLHttpRequest();
+	xhr.open('PUT', url, true);
+	xhr.send();
 }
-
-function clockOut(emp){
-	console.log(emp);
-}
-
-
-
 

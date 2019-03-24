@@ -1,17 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-// const subSchema = new Schema({
-//   Day: {
-//     type: String,
-//     default: ""
-//   },
-//   session: {
-//     type: [Number],
-//     default: 0
-//   }
-// });
-
 const EmployeeSchema = new Schema({
 	firstName: {
 		type: String,
@@ -45,9 +34,7 @@ const EmployeeSchema = new Schema({
 		default: []
 	},
 	
-	sessions: {
-		type: [{}],
-	},
+	sessions: [{}],
 
 	isClockedIn: {
 		type: Boolean,
