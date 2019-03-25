@@ -29,10 +29,6 @@ router.delete('/:id', function(req, res, next){
   }).catch(next);
 });
 
-
-
-
-
 router.put('/in/:id', function(req, res, next){
   Employee.findOne({_id: req.params.id})
   .then(function(employee){
@@ -58,22 +54,17 @@ router.put('/out/:id', function(req, res, next){
     .then(function(employee){
       Employee.findOne({_id: req.params.id})
       .then(function(employee){
-        var session = calculateMinutes(employee.timeIn[employee.timeIn.length-1], employee.timeOut[employee.timeOut.length-1]);
+        var session = calculateMinutes(employee.timeIn, employee.timeOut);
         var dateString = new Date().toLocaleString("en-US", {timeZone: "America/New_York"}).slice(0, 9);
-       Employee.findOneAndUpdate({_id: req.params.id}, {"sessions": { "date": dateString, "minutes": session }})
-       
-//       Employee.findOneAndUpdate({_id: req.params.id},  {"sessions": { "date": dateString }, $inc: { "sessions.minutes": session } })
-       
 
-       //Employee.findOneAndUpdate({_id: req.params.id}, {"sessions": {"date": dateString, "minutes": session }})
-        //Employee.findOneAndUpdate({_id: req.params.id}, {$push: {"sessions": {"date": dateString, "minutes": session }}})
+        Employee.findOneAndUpdate({_id: req.params.id}, { $push: { "session": { "date": dateString, "seconds": (parseInt(session, 10)) } } })
         .then(function(employee){
           Employee.findOne({_id: req.params.id})
           .then(function(employee){
             res.send(employee);
           });
         });
-      })
+      });
     });
   } else {
     res.end();
@@ -100,12 +91,11 @@ function calculateMinutes(timeIn = 0, timeOut = 0){
 		// }
 	// 	// calculate total hours for given time frame
 	// // timeIn to timeOut + runningTime
-	var previousTime = 0;
+	var elapsedSecs = 0;
 	if(timeIn && timeOut) {
-  	previousTime = timeOut - timeIn;
+  	elapsedSecs = (timeOut - timeIn) / 1000;
 	}
-// 	console.log(timeIn, timeOut, Math.floor((previousTime / 1000) / 60));
-	return Math.floor((previousTime / 1000) / 60);
+	return Math.floor(elapsedSecs);
 }
 
 function calculateRunningTime(timeIn){
@@ -116,3 +106,6 @@ function calculateRunningTime(timeIn){
 }
 
 module.exports = router;
+
+// keep//***Employee.findOneAndUpdate({_id: req.params.id}, { $set: 
+// { "session": { "seconds": (parseInt(session, 10)), "date": dateString} }  })**// keep

@@ -24,18 +24,14 @@ const EmployeeSchema = new Schema({
 		default: ""
 	},
 	
-	timeIn: {
-		type: Array,
-		default: []
+	timeIn: Number,
+	
+	timeOut: Number,
+	
+	session: {
+		type: [{date: String, seconds: Number}]
 	},
 	
-	timeOut: {
-		type: Array,
-		default: []
-	},
-	
-	sessions: [{}],
-
 	isClockedIn: {
 		type: Boolean,
 		default: false
