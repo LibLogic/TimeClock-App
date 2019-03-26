@@ -17,7 +17,7 @@ const EmployeeSchema = new Schema({
 	},
 	companyName: {
 		type: String,
-		default: ""
+		default: "Starbucks, Inc."
 	},
 	deptName: {
 		type: String,
@@ -28,7 +28,7 @@ const EmployeeSchema = new Schema({
 	
 	timeOut: Number,
 	
-	session: {
+	sessions: {
 		type: [{date: String, seconds: Number}]
 	},
 	

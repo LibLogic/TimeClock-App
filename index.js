@@ -15,6 +15,8 @@ app.use(express.static("./public"));
 
 app.use(bodyParser.json());
 
+app.use(bodyParser.urlencoded({ extended: true }));
+
 app.use("/api", require("./routes/api"));
 
 app.use(function(err, req, res, next){
