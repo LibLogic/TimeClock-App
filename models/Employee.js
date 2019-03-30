@@ -2,6 +2,14 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const EmployeeSchema = new Schema({
+	companyName: {
+		type: String,
+		default: "Raytheon, Inc."
+	},
+	deptName: {
+		type: String,
+		default: "Production"
+	},
 	firstName: {
 		type: String,
 		default: ""
@@ -10,32 +18,25 @@ const EmployeeSchema = new Schema({
 		type: String,
 		default: ""
 	},
-	empId:{
+	lastLogIn: {
 		type: Number,
-		required: [true, 'empId field is required'],
 		default: 0
 	},
-	companyName: {
-		type: String,
-		default: "Starbucks, Inc."
+	lastLogOut: {
+		type: Number,
+		default: 0
 	},
-	deptName: {
-		type: String,
-		default: ""
-	},
-	
-	timeIn: Number,
-	
-	timeOut: Number,
-	
 	sessions: {
-		type: [{date: String, seconds: Number}]
+		type: [{date: String, timeIn: Number, timeOut: Number, sessionTime: Number, accumulatedTime: Number }]
 	},
-	
 	isClockedIn: {
-		type: Boolean,
+		type: Boolean, 
 		default: false
+	},
+	dailyArchive: {
+		type: [{}]
 	}
+	
 });
 
 const Employee = mongoose.model("employee", EmployeeSchema);

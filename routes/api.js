@@ -8,6 +8,12 @@ router.get('/', function(req, res, next){
   }).catch(next);
 });
 
+router.get('/:id', function(req, res, next){
+  Employee.findOne({_id: req.params.id}).then(function(employee){
+    res.send(employee);
+  }).catch(next);
+});
+
 router.post('/', function(req, res, next){
   Employee.create(req.body).then(function(employee){
     res.send(employee);
@@ -32,8 +38,24 @@ router.put('/in/:id', function(req, res, next){
   Employee.findOne({_id: req.params.id})
   .then(function(employee){
   if( employee.isClockedIn == false ){
+  //   return;
+  // }
     var timeIn = new Date().getTime();
-    Employee.findOneAndUpdate({_id: req.params.id}, { $set: { "timeIn": timeIn, "isClockedIn": true } } )
+    
+    if(employee.lastLogOut != 0){
+      var nowDate = new Date().toLocaleString("en-US", {timeZone: "America/New_York"}).slice(0, 9);
+      var lastLoggedOutDate = new Date(employee.sessions[employee.sessions.length -1].timeOut).toLocaleString("en-US", {timeZone: "America/New_York"}).slice(0, 9);
+      var totalTime = employee.sessions[employee.sessions.length -1].accumulatedTime;
+        if (nowDate !== lastLoggedOutDate){
+          Employee.findOneAndUpdate({_id: req.params.id}, { $push: { "dailyArchive": { "date":  lastLoggedOutDate, "totalTime": totalTime  } } } )
+          .then(function(employee){
+            Employee.updateOne({_id: req.params.id}, { $set: { "sessions": [] } } )
+            .then(function(employee){
+            });
+          }).catch(next);
+        }
+      }
+     Employee.findOneAndUpdate({_id: req.params.id}, { $set: { "lastLogIn": timeIn, "isClockedIn": true  } } )
     .then(function(employee){
       Employee.findOne({_id: req.params.id})
       .then(function(employee){
@@ -49,14 +71,19 @@ router.put('/out/:id', function(req, res, next){
   Employee.findOne({_id: req.params.id})
   .then(function(employee){
   if( employee.isClockedIn == true ){
+  //   return
+  // }
     var timeOut = new Date().getTime();
-    Employee.findOneAndUpdate({_id: req.params.id}, { $set: { "timeOut": timeOut, "isClockedIn": false } } )
+    Employee.findOneAndUpdate({_id: req.params.id}, { $set: { "lastLogOut": timeOut, "isClockedIn": false } } )
       .then(function(employee){
       Employee.findOne({_id: req.params.id})
       .then(function(employee){
-        var session = calculateMinutes(employee.timeIn, employee.timeOut);
+        var sessionTime = calculateSession(employee.lastLogIn, timeOut);
         var dateString = new Date().toLocaleString("en-US", {timeZone: "America/New_York"}).slice(0, 9);
-        Employee.findOneAndUpdate({_id: req.params.id}, { $push: { "sessions": { "date": dateString, "seconds": session } } })
+        var totalTimeForDay = employee.sessions.reduce(function(acc, elem){
+          return acc += elem.sessionTime; 
+        }, sessionTime);      
+        Employee.findOneAndUpdate({_id: req.params.id}, { $push: { "sessions": { "date": dateString, "timeIn": employee.lastLogIn, "timeOut": timeOut, "sessionTime": sessionTime, "accumulatedTime": totalTimeForDay } } } )       
         .then(function(employee){
           Employee.findOne({_id: req.params.id})
           .then(function(employee){
@@ -70,46 +97,13 @@ router.put('/out/:id', function(req, res, next){
   }}).catch(next);
 });
 
-router.get('/employee/names', function(req, res, next){
-  Employee.find({})
-  .then(function(employees){
-  var result = [];
-  employees.forEach(function(employee){
-    result.push(employee._id);
-  });
-    res.send(result);
-  }).catch(next);
-});
-
-// if todays date == date from sessions field then accumulate our session value
-// using the $inc: function from mongoose
-// otherwise it's a new day, so push the sessions date (which will now be yesterdays date)
-// date & total into a dailyHours field, reinitialize the sessions field with 
-// todays new date and a value of 0
-
-// function archiveByDay (){
-  
-// }
-
-function calculateMinutes(timeIn = 0, timeOut = 0){
-		// if(isUserLoggedIn()){
-		// 	var runningTime = calculateRunningTime(timeIn);
-		// }
-	// 	// calculate total hours for given time frame
-	// // timeIn to timeOut + runningTime
+function calculateSession(timeIn = 0, timeOut = 0){
 	var elapsedSecs = 0;
 	if(timeIn && timeOut) {
   	elapsedSecs = (timeOut - timeIn) / 1000;
 	}
 	return Math.floor(elapsedSecs);
 }
-
-// function calculateRunningTime(timeIn){
-// 	var runningTime = 0;
-// // 	var currentTime = 9;
-// // 	runningTime =  currentTime - timeIn;
-// 	return runningTime;
-// }
 
 module.exports = router;
 

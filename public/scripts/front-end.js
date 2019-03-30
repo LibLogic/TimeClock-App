@@ -1,107 +1,185 @@
-
-const changeBtn = document.getElementById("change-btn");
+var isClockedIn;
 const inputSpan = document.getElementById("input-span");
-const saveBtn1 = document.getElementById("save-btn1");
-const addEmpBtn = document.getElementById("add-emp-btn");
-const addEmp = document.getElementById("add-emp");
-const empForm =	document.getElementById("emp-form");
+const empDataInput =	document.getElementById("emp-data-input");
 const clockForm = document.getElementById("clock-form");
-const saveBtn2 = document.getElementById("save-btn2");
-const inBtn = document.getElementById("in-btn");
-const outBtn = document.getElementById("out-btn");
-const selEmp = document.getElementById("select-emp");
+
 const changeCompanyName = document.getElementById("change-company-name");
 const companyName = document.getElementById("companyName");
-
-function updateCompanyName(){
-	console.log(companyName.innerText = changeCompanyName.value)
-	//save button click save to db (use PUT)
-}
-
 changeCompanyName.addEventListener('keyup', function(){
-	companyName.innerText = changeCompanyName.innerText.value;
-	console.log(changeCompanyName.innerText.value);
+	companyName.innerText = changeCompanyName.value;
 });
 
+const changeBtn = document.getElementById("change-btn");
 changeBtn.addEventListener('click', function(){
 	changeBtn.classList.add('hidden');
 	inputSpan.classList.remove('hidden');
 });
 
-saveBtn1.addEventListener('click', function(e){
+const saveCompanyBtn = document.getElementById("save-company-btn");
+saveCompanyBtn.addEventListener('click', function(e){
 	changeBtn.classList.remove('hidden');
 	inputSpan.classList.add('hidden');
 	e.preventDefault();
-	//save button click save to db (use PUT)
 });
 
+const addEmp = document.getElementById("add-emp");
+const addEmpBtn = document.getElementById("add-emp-btn");
 addEmpBtn.addEventListener('click', function(){
 	addEmpBtn.classList.add('hidden');
 	addEmp.classList.add('hidden');	
-	empForm.classList.remove('hidden');
+	empDataInput.classList.remove('hidden');
 	clockForm.classList.add('hidden');
 });
 
-saveBtn2.addEventListener('click', function(e){
-	empForm.classList.add('hidden');
+const saveUserBtn = document.getElementById("save-user-btn");
+saveUserBtn.addEventListener('click', function(){
+	empDataInput.classList.add('hidden');
 	addEmpBtn.classList.remove('hidden');
 	clockForm.classList.remove('hidden');
 	addEmp.classList.remove('hidden');
+	saveUser();
 });
 
+const inBtn = document.getElementById("in-btn");
 inBtn.addEventListener('click', function(){
-	inBtn.setAttribute('disabled', 'disabled');
-	outBtn.removeAttribute('disabled');
-	var emp = selEmp.options[selEmp.selectedIndex].text;
+	// if(isClockedIn == true){
+		inBtn.setAttribute('disabled', 'disabled');
+		outBtn.removeAttribute('disabled');
+	// }
+	var emp = selEmp.options[selEmp.selectedIndex].value;
 	var url = "https://cohort-6d-hdgknsn.c9users.io/api/in/" + emp;
 	logTime(url);
 });
 
+const outBtn = document.getElementById("out-btn");
 outBtn.addEventListener('click', function(){
-	outBtn.setAttribute('disabled', 'disabled');
-	inBtn.removeAttribute('disabled');
-	var emp = selEmp.options[selEmp.selectedIndex].text;
+	// if(isClockedIn == false){
+		outBtn.setAttribute('disabled', 'disabled');
+		inBtn.removeAttribute('disabled');
+	// }
+	var emp = selEmp.options[selEmp.selectedIndex].value;
+	var url2 = "https://cohort-6d-hdgknsn.c9users.io/api/" + emp;
 	var url = "https://cohort-6d-hdgknsn.c9users.io/api/out/" + emp;
 	logTime(url);
+	getEmpData(url2);
 });
 
-selEmp.addEventListener('change', function(e){
+const selEmp = document.getElementById("select-emp");
+selEmp.addEventListener('change', function(){
 	outBtn.setAttribute('disabled', 'disabled');
 	inBtn.removeAttribute('disabled');
+	if(selEmp.selectedIndex != 0){
+		var emp = selEmp.options[selEmp.selectedIndex].value;
+		var url = "https://cohort-6d-hdgknsn.c9users.io/api/" + emp;
+		getEmpData(url);
+	}// else {
+	// 	inBtn.setAttribute('disabled', 'disabled');
+	// 	outBtn.setAttribute('disabled', 'disabled');
+	// }
 });
 
 function logTime(url){
+	isClockedIn = true;
+	console.log(isClockedIn);
 	var xhr = new XMLHttpRequest();
-	xhr.open('PUT', url, true);
+	xhr.open('PUT', url, false);
 	xhr.send();
 }
 
-(function getEmpNames(){
-	var xhr = new XMLHttpRequest();
-	xhr.open('GET','api/employee/names', true);
-	xhr.send();
-
-	xhr.onload = function() {
-	  if (xhr.status != 200) { // analyze HTTP status of the response
-	    alert(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
-	  } else {
-			var names = JSON.parse(xhr.responseText);
-		  var options = "<option>select your name</option>";
-		  names.forEach(function(name){
-		     options += `<option>${name}</option>`;
-		  });
-		  }
-		  selEmp.innerHTML = options;
+function saveUser(){
+	//construct data here
+	var	firstName = document.getElementById("firstName").value;
+	var	lastName = document.getElementById("lastName").value;
+	var	deptName = document.getElementById("deptName").value;
+	if(firstName == "" || lastName == "" || deptName == ""){
+		alert('Please fill in all fields!');
+		return;
+	}
+	
+document.getElementById("firstName").value = "";
+document.getElementById("lastName").value = "";
+document.getElementById("deptName").value = "";
+	var data = {
+		firstName: firstName,
+		lastName: lastName,
+		deptName: deptName
 	};
-})();
-//on document ready get a list of employees by first and last names
+	var xhr = new XMLHttpRequest();
+	xhr.open('POST', '/api', true);
+	xhr.setRequestHeader("Content-Type", "application/json");
 
-// router.get('/employee/names', function(req, res, next){
-//   Employee.find({}).then(function(employees){
-//   var result = [];
-//   employees.forEach(function(employee){
-//       result.push(employee.firstName + ' ' + employee.lastName);
-//   });
-//     res.send(result);
-//   }).catch(next);
-// });
+	xhr.onload = function(){
+		if(xhr.status !== 200){
+	    	alert(`Error ${xhr.status}: ${xhr.statusText}`);			
+		} else {
+			getEmpNames();
+		}
+	};
+	xhr.send(JSON.stringify(data));	
+}
+
+function getEmpData(url){
+	isClockedIn = false;
+	console.log(isClockedIn);
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', url, true);
+	xhr.setRequestHeader("Content-Type", "application/json");
+	xhr.send();
+		xhr.onload = function() {
+	  if (xhr.status != 200) {
+	    alert(`Error ${xhr.status}: ${xhr.statusText}`);
+	  } else {
+			var employee = JSON.parse(xhr.responseText);
+			var table = document.getElementById('hoursTable');
+			var rowCount = table.getElementsByTagName("tr").length;
+			while(rowCount > 6){
+				table.deleteRow(-1);
+				rowCount--;
+			} 
+			var totalHours = 0;
+employee.sessions.forEach(function(elem){
+			// employee.dailyArchive.forEach(function(elem){
+				var row = table.insertRow(-1);
+				var cell1 = row.insertCell(0);
+				var cell2 = row.insertCell(1);
+				cell1.innerHTML = elem.date;
+				cell2.innerHTML = elem.sessionTime; //totalTime;
+				totalHours += elem.sessionTime; //totalTime;
+			});
+			var row = table.insertRow(-1);
+			var cell1 = row.insertCell(0);
+			var cell2 = row.insertCell(1);
+			cell1.innerHTML = 'Total Hours';
+			cell2.innerHTML = totalHours;
+	  }
+	};
+}
+
+function getEmpNames(){
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET','api/', true);
+	xhr.setRequestHeader("Content-Type", "application/json");
+	xhr.send();
+	xhr.onload = function() {
+	  if (xhr.status != 200) {
+	    alert(`Error ${xhr.status}: ${xhr.statusText}`);
+	  } else {
+		var employees = JSON.parse(xhr.responseText);
+		var options = "<option>select your name</option>";
+		
+		// generate names for each employee
+		// then create dynamic dropdown of names
+		var names = [];
+		employees.forEach(function(employee){
+		  names.push({ id: employee._id, name: employee.firstName + ' ' + employee.lastName });
+		});	
+		  
+		names.forEach(function(name){
+		 options += `<option value="${name.id}">${name.name}</option>`;
+		});
+	  }
+	  selEmp.innerHTML = options;
+	};
+}
+
+getEmpNames();
