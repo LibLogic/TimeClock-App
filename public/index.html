@@ -6,55 +6,78 @@
 	<body>
 		<hr style="margin: 30px 0" />				
 		<div>
-				<h1 id="companyName">Starbucks Inc.</h1><button id="change-btn">Change Company Name</button>
+				<h1 id="company-name" style="margin-bottom: 8px;">CareerDevs University<br /><h2 style="margin-top: 0;">Time Clock</h2></h1><button style="display: none;" id="change-btn">Change Company Name</button>
 				<span id="input-span" class="hidden"><label>Change Company Name: </label><input id="change-company-name" type="text" /><button id="save-company-btn">Save</button></span>
 		</div>
 		<hr style="margin-top: 40px" />
 		
-		<div style="width: 40%; float: left;">
-			<h1>Total Hours</h1>
+		<section style="width: 40%; float: left;">
+			<h1>Time Report</h1>
 		
 			<table id=hoursTable>
-				<tr><th>By Employee: <input type="checkbox" checked/></th><th>By Department: <input type="checkbox"/></th></tr>
+				<tr><th>By Student: <input id="emp-chkbx" type="checkbox" checked/></th><th>By Cohort: <input id="dept-chkbx" type="checkbox"/></th></tr>
 				<tr><th colspan="2">Date Range</th></tr>
 				<tr><th>From</th><th>To</th></tr>		
-				<tr><th><input type="date"id="dateFrom"/></th><th><input type="date" id="dateTo"/></th></tr>
+				<tr><th><input type="date" id="dateFrom" onclick="alert('This feature is not implemented yet')"/></th><th><input type="date" id="dateTo" onclick="alert('This feature is not implemented yet')"/></th></tr>
 				<tr><th colspan="2">----------------------------</th></tr>
 				<tr><th>Date</th><th>Hours</th></tr>
-				<!--<tr><th>Total Hours</th><th>10.5</th></tr>		-->
 			</table>
-		</div>
+		</section>
 		
-		<form method="post" id="clock-form" style="margin-top: 80px;">
-			<h2>Time Clock</h2>
-			<label>Employee Name: </label>
-
-			<select id="select-emp">
-				 <!--dynamic list of employees from the DB inserted here as <option><employee></option>-->
-			</select>
-			</a><span><button id="in-btn" disabled="disabled">Time In</button></span>
-			</a><span><button id="out-btn" disabled="disabled">Time Out</button></span>
-		</form>
+		<h2 style="margin-top: 28px;">Time Clock</h2>
+		
+		<section id="emp-section">
+			<form method="post" id="clock-form">
+				<h3>Student Login</h3>
+				<label>Student Name: </label>
 	
-		<p id="add-emp">
-			<br>
-			<span><button id="add-emp-btn">Add New Employee</button></span>
-		</p>
+				<select id="select-emp">
+					 <!--dynamic list of employees from the DB inserted here as <option><employee></option>-->
+				</select>
+				</a><span><button id="in-btn">Time In</button></span>
+				</a><span><button id="out-btn">Time Out</button></span>
+			</form>
 		
-		<div id="emp-data-input" class="hidden" style="margin-top: 80px;">
-			<h2>Add New Employee</h2>				
-			<label>First Name:&nbsp;</label>
-			<input type="text" id="firstName" placeholder="first"/>
-							<label>&nbsp;&nbsp;&nbsp;&nbsp;Last Name:&nbsp;</label>
-			<input type="text" id="lastName" placeholder="last"/>
+			<p id="add-emp">
+				<br>
+				<span><button id="add-emp-btn">Add New Student</button></span>
+			</p>
+			
+			<div id="emp-data-input" class="hidden">
+				<h3>Add New Student</h3>				
+				<label>First Name:&nbsp;</label>
+				<input type="text" id="firstName" placeholder="first"/>
+				<label>&nbsp;&nbsp;&nbsp;&nbsp;Last Name:&nbsp;</label>
+				<input type="text" id="lastName" placeholder="last"/>
+	
+				<p>
+					<label>Cohort: </label>
+					<input type="text" id="deptName" placeholder="cohort"/><p></p>
+					<button id="save-emp-btn">Submit</button>
+				</p>
+			</div>
+		</section>
+		
+		<div id="dept-section" class="hidden">
+			<h3>Sorted by Cohort</h3>
+			<label>Cohort: </label>
+			<select id="select-dept">
+				<option>please select a cohort</option>
+				<option>Cohort 1313</option> <!--dynamic list of cohortd from the DB inserted here as <option><cohort></option>-->
+			</select>
 
-			<p>
-				<label>Department Name: </label>
-				<input type="text" id="deptName" placeholder="dept"/><p></p>
-				<button id="save-user-btn">Submit</button>
+			<p id="add-dept">
+				<br>
+				<span><button id="add-dept-btn">Add New Cohort</button></span>
 			</p>
 		</div>
-
+		
+		<div id="dept-data-input" class="hidden">
+			<h3>Add New Corhort</h3>				
+			<label>Cohort:&nbsp;</label>
+			<input type="text" id="deptName" placeholder="Cohort"/>
+			<button id="save-dept-btn">Submit</button>
+		</div>
 
 	<script src="./scripts/front-end.js" type="text/javascript"></script>
 	</body>
